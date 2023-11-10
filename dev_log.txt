@@ -1,0 +1,20 @@
+Progess log!
+
+11/3/23
+I am starting this today to track where I am and what needs to be done for my project. Up to this point I have:
+* Created a Spotify developer account and an app, and acquired an API client ID and "secret"
+* Learned the spotipy library and developed a set of functions for retrieving data using the API and organizing it into a usable format
+* Learned the basics of Flask and Streamlit, decided to use Streamlit and make a VERY simple site with basic spotipy functionality
+* Attempted to allow outside-user authentication through streamlit and spotipy, but this seems to not be possible. All functionality of my app will then have to be feasible using my own personal data or using publicly available spotify data. An end-user will not be able to connect their own account :(
+
+What are my immediate next steps? My ultimate goal is some site that provides a dashboard with unique analytics for spotify playlists and tools to make novel song suggestions or generate new playlists.
+* make a more comprehensive streamlit site interface, including a search function, a way to input and parse public playlists, and a system for making and editing in-app "songlists"
+* after this, I will work on suggestion or playlist-generation tools that use a selected songlist as a seed or input. The final app will have tools for users to navigate and select songs (either from playlists or by searching and manual selection), and then receive analytics for the selected songlist and have tools to generate song suggestions based on the selected list.
+
+11/5/23
+I did a bit more on the interface, learned about buttons and other streamlit widgets. there is now a basic interface for selecting a playlist and displaying its DF, either from selecting from the user's own playlists by dropdown menu or by entering a URL. imminent to-do:
+* display the "new playlist" at the bottom, with editable title and description, and big "publish playlist" button
+    * starts with no tracks, each track displayed in the above search/url/select section should have an "add" button next to it that adds the track to the new playlist
+    * each displayed track will have a remove button, and an info button that when clicked shows the songs year/artist/cover/stats
+    
+I've also hit a rate limit for the audio_features function, and have learned that i can pass multiple songs into it. i will need to rearrange some functions and take more care to avoid hitting it again. People here have theh same issue: https://community.spotify.com/t5/Spotify-for-Developers/Max-retries-reached-too-many-429-error-responses-on-audio/td-p/5656742

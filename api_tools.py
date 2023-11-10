@@ -32,6 +32,34 @@ def get_songlist_from_playlist(playlist:str) -> list:
         songlist.append(playlist['tracks']['items'][i]['track']['uri'])
     return songlist
 
+def get_trackdata_from_search(search_query:str) -> list:
+    results = sp.search(q = search_query, limit = 10, type = 'track')
+    tracklist = []
+    for song in results['tracks']['items']:
+        songdict = {'name':song['name'],
+                    'uri':song['uri'],
+                    'first_artist':song['artists'][0]['uri'],
+                    'artist_name':song['artists'][0]['name'],
+                    'image_url':song['album']['images'][0]['url'],
+                    'duration':song['duration_ms']/1000,
+                    'popularity':song['popularity']}
+        tracklist.append(songdict)
+    return tracklist
+
+def get_trackdata_from_playlist(playlist:str) -> list:
+    playlist = sp.playlist(playlist)
+    tracklist = []
+    for song in playlist['tracks']['items']:
+        songdict = {'name':song['track']['name'],
+                    'uri':song['track']['uri'],
+                    'first_artist':song['track']['artists'][0]['uri'],
+                    'artist_name':song['track']['artists'][0]['name'],
+                    'image_url':song['track']['album']['images'][0]['url'],
+                    'duration':song['track']['duration_ms']/1000,
+                    'popularity':song['track']['popularity']}
+        tracklist.append(songdict)
+    return tracklist
+
 def get_songlist_from_history(limit:int) -> list:
     history = sp.current_user_recently_played(limit=limit)
     songlist = []
