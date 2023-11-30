@@ -10,6 +10,8 @@ requests = "*"
 spotipy = "*"
 matplotlib = "*"
 numpy = "*"
+plotly = "*"
+scikit-learn = "*"
 
 [dev-packages]
 
