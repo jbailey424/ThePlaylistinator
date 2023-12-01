@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "18042b9862700a70970a02aa8702c614d2be80ae909d59506921b832d4c063a7"
+            "sha256": "2c74261d15a4e8437b88bc7dcd9043afaa47d7ee84abf58b9a9c3421593b75c2"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -23,6 +23,15 @@
             ],
             "markers": "python_version >= '3.8'",
             "version": "==5.2.0"
+        },
+        "async-timeout": {
+            "hashes": [
+                "sha256:4640d96be84d82d02ed59ea2b7105a0f7b33abe8703703cd0ab0bf87c427522f",
+                "sha256:7405140ff1230c310e51dc27b3145b9092d659ce68ff733fb0cefe3ee42be028"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.7'",
+            "version": "==4.0.3"
         },
         "attrs": {
             "hashes": [
@@ -332,11 +341,11 @@
         },
         "jsonschema-specifications": {
             "hashes": [
-                "sha256:c9b234904ffe02f079bf91b14d79987faa685fd4b39c377a0996954c0090b9ca",
-                "sha256:f596778ab612b3fd29f72ea0d990393d0540a5aab18bf0407a46632eab540779"
+                "sha256:9472fc4fea474cd74bea4a2b190daeccb5a9e4db2ea80efcf7a1b582fc9a81b8",
+                "sha256:e74ba7c0a65e8cb49dc26837d6cfe576557084a8b423ed16a420984228104f93"
             ],
             "markers": "python_version >= '3.8'",
-            "version": "==2023.11.1"
+            "version": "==2023.11.2"
         },
         "kiwisolver": {
             "hashes": [
@@ -1044,12 +1053,12 @@
         },
         "streamlit": {
             "hashes": [
-                "sha256:c144168881bf7bd6d6017a9bfde585b52d20087b10b2d5c85d376ef6d52aa8ee",
-                "sha256:cc144c4741a1bd850ccd13f1ef18fad170718242dd7930f4ae36e238d08ecd22"
+                "sha256:753510edb5bb831af0e3bdacd353c879ad5b4f0211e7efa0ec378809464868b4",
+                "sha256:b6dfff9c5e132e5518c92150efcd452980db492a45fafeac3d4688d2334efa07"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8' and python_full_version != '3.9.7'",
-            "version": "==1.28.2"
+            "version": "==1.29.0"
         },
         "tenacity": {
             "hashes": [
