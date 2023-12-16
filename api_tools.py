@@ -12,10 +12,10 @@ import random
 '''
 spotipy stuff
 '''
-client_id = "c5029ed3aca649949ef00903e6aabf91"
-client_secret = "836208c86df64c4d98db67b6bc426ace"
+client_id = "id"
+client_secret = "secret"
 
-sp = spotipy.Spotify(
+sp = spotipy.Spotify( #authorize connection with spotify API, which is accessed through spotipy
     auth_manager=SpotifyOAuth(
         client_id=client_id,
         client_secret=client_secret,
@@ -24,14 +24,19 @@ sp = spotipy.Spotify(
     )
 )
 
-# parking lot for finished functions :)
 def get_user_playlists() -> list: #list of playlists for the signed-in user, of form [{'name':str, 'uri':str}, ]
+    '''
+    Returns a list of playlist URI's as strings. It gets the URI of every playlist saved in the authorized user's library
+    '''
     output = []
     for playlist in sp.current_user_playlists()['items']:
         output.append([playlist['name'], playlist['uri']])
     return output
 
 def get_songlist_from_playlist(playlist:str) -> list: #list of track uris from inputed playlist id/uri/url
+    '''
+    given a public or authorized playlist's URI as a string, this returns a list of every song's URI from the playlist. 
+    '''
     playlist = sp.playlist(playlist)
     songlist = []
     for i in range(len(playlist['tracks']['items'])):
@@ -39,6 +44,9 @@ def get_songlist_from_playlist(playlist:str) -> list: #list of track uris from i
     return songlist
 
 def give_recs(playlistdf):
+    '''
+    given a dataframe generated from a playlist
+    '''
     tracklist = playlistdf['uri'].to_list()
     seed = random.sample(tracklist, min(5, len(tracklist))) if len(tracklist) > 5 else tracklist
     recs = sp.recommendations(seed_tracks = seed, limit = 10)
@@ -55,6 +63,9 @@ def give_recs(playlistdf):
     return pd.DataFrame(tracklist)
 
 def get_trackdata_from_search(search_query:str) -> list: #returns a list of song metadata dictionaries from a search query
+    '''
+    given a string, query a search for tracks from spotify. return a usable set of metadata dictionaries for each song in the search results. 
+    '''
     results = sp.search(q = search_query, limit = 10, type = 'track')
     tracklist = []
     for song in results['tracks']['items']:
@@ -69,6 +80,9 @@ def get_trackdata_from_search(search_query:str) -> list: #returns a list of song
     return tracklist
 
 def get_trackdata_from_lastfmtag(tag):
+    '''
+    query songs tagged on lastfm with the inputted string. for the returned songs, get their spotify metadata and return a list of dictionaries.
+    '''
     tracklist = []
     faillist = []
     r = lastfm_call({'method': 'tag.getTopTracks', 'tag':tag})
@@ -89,6 +103,9 @@ def get_trackdata_from_lastfmtag(tag):
     return tracklist
 
 def get_trackdata_from_playlist(playlist:str) -> list: #returns a list of song metadata dictionaries from a playlist id/uri/url
+    '''
+    given a playlist URI or URL as a string, get the metadata for each song on the playlist and return it as a list of dictionaries.
+    '''
     playlist = sp.playlist(playlist)
     tracklist = []
     for song in playlist['tracks']['items']:
@@ -103,6 +120,9 @@ def get_trackdata_from_playlist(playlist:str) -> list: #returns a list of song m
     return tracklist
 
 def get_songlist_from_history(limit:int) -> list: #returns list of song uris from user history, not currently used
+    '''
+    returns a list of song URI's from the authenticated user's most recent listening history. Only parameter is 'limit', the number of songs returned.
+    '''
     history = sp.current_user_recently_played(limit=limit)
     songlist = []
     for i in range(len(history['items'])):
@@ -110,7 +130,11 @@ def get_songlist_from_history(limit:int) -> list: #returns list of song uris fro
     return songlist
 
 def get_songlist_from_toptracks(limit:int, time:str) -> list: #returns list of song uris from user's top tracks, not currently used
-    #time can be one of three strings, 'long_term' gives all recorded data, 'medium_term' gives 6 months, 'short_term' gives 4 weeks
+    '''
+    returns list of song URI's from the authenticated user's top tracks.
+    limit is the number of songs returned, up to 100
+    time can be one of three strings, 'long_term' gives all recorded data, 'medium_term' gives 6 months, 'short_term' gives 4 weeks
+    '''
     history = sp.current_user_top_tracks(limit=limit, offset=0, time_range=time)
     songlist = []
     for i in range(len(history['items'])):
@@ -118,6 +142,11 @@ def get_songlist_from_toptracks(limit:int, time:str) -> list: #returns list of s
     return songlist
 
 def get_fulldata_from_songlist(songlist:list)->list: #from an inputted list of song uris, return a list of dictionaries of song audio attributes
+    '''
+    from a list of song URI's, return a list of dictionaries containing full metadata AND audio features
+    can easily be used to expand a metadata df into a full audio df with:
+    fulldf = pd.DataFrame(get_fulldata_from_songlist(df['uri']))
+    '''
     dictlist = []
     songfeatures = sp.audio_features(songlist) #query audio features in one batch because the API limits this call
     for i, n in enumerate(songlist):
@@ -162,14 +191,20 @@ secret = '3e380c0f4443ba6f282d2e345717bed5'
 agent = 'jeff424'
 
 def lastfm_call(payload):
+    '''
+    setup for easy lastfm api calls
+    '''
     headers = {'user-agent': 'jeff424'}
     url = 'https://ws.audioscrobbler.com/2.0/'
-    payload['api_key'] = 'a73abdec33ee8367126a980e3f067eaa'
+    payload['api_key'] = 'key' #insert the actual key here!
     payload['format'] = 'json'
     response = requests.get(url, headers=headers, params=payload)
     return response
 
 def gettoptags_fromsong(songname, artistname, limit=15):
+    '''
+    given a song and artist name, retrieve the top 15 lastfm tags on it
+    '''
     tags = []
     try:
         r = lastfm_call({'method': 'track.getTopTags', 'track':songname, 'artist':artistname, 'autocorrect':1})
@@ -183,6 +218,10 @@ def gettoptags_fromsong(songname, artistname, limit=15):
 visualizations or etc
 '''
 def barchart_tags(playlistdf): #requires taglist already be a column of df
+    '''
+    creates and displays a barchart of lastfm tag frequency for a playlistdf. Only needs metadata df, not audio features.
+    for each row of the playlist, it queries the lastfm tag using the songs name and artist name. tags are then all counted and visualized.
+    '''
     df = playlistdf.copy()
     df['name'] = df['name'] + ' by ' + df['artist_name'] + '<br>'
     exploded_df = df.explode('taglist')
@@ -215,6 +254,9 @@ def barchart_tags(playlistdf): #requires taglist already be a column of df
     st.plotly_chart(fig, use_container_width = True, theme = None)
     
 def timeline_chart(df):
+    '''
+    given a metadata dataframe, create and display a timeline visualization showing distribution of release years of songs.
+    '''
     playlistdf = df.copy()
     playlistdf['release_date'] = playlistdf['release_date'].str.slice(0,4)
     playlistdf['year'] = pd.to_datetime(playlistdf['release_date'], errors='coerce').dt.year
@@ -235,6 +277,9 @@ def timeline_chart(df):
     st.plotly_chart(fig, use_container_width = True, theme = None)
     
 def attribute_radar(songlist_data): #make a plotly radar plot of the mean of the following song attributes for an inputted df
+    '''
+    given a full audio feature dataframe, make and display a radar chart showing means 
+    '''
     attributes = ['popularity', 'danceability', 'energy', 'valence', 'instrumentalness', 'acousticness', 'speechiness', 'liveness']
     playlistdf = songlist_data[attributes]
     playlistdf.loc[:, 'popularity'] = playlistdf['popularity'] / 100
@@ -256,6 +301,9 @@ def attribute_radar(songlist_data): #make a plotly radar plot of the mean of the
     st.plotly_chart(fig, use_container_width = True, theme = None)
 
 def duration_histogram(df):
+    '''
+    given metadata df, make and display a histogram of song lengths
+    '''
     fig = px.histogram(df,
         x='duration_s',
         title='Song Durations',
@@ -275,6 +323,9 @@ def duration_histogram(df):
     st.plotly_chart(fig, use_container_width = True, theme = None)
 
 def display_analytics(playlistdf):
+    '''
+    given a metadata df, make a full audio feature df and then display an organized dashboard of all the above visualizations for the inputted playlist df. 
+    '''
     playlistdata = pd.DataFrame(get_fulldata_from_songlist(playlistdf['uri']))
     taglist = taglist_fromplaylistdf(playlistdata)
     playlistdata['taglist'] = taglist
@@ -294,6 +345,9 @@ def display_analytics(playlistdf):
     
 
 def songviz(song:dict):
+    '''
+    make a radar chart of a single song's audio features by quickly converting it to a df
+    '''
     tags = gettoptags_fromsong(song['name'], song['artist_name'], 10)
     attributes = get_fulldata_from_songlist([song['uri']])[0]
     write, viz = st.columns(2)
@@ -304,6 +358,9 @@ def songviz(song:dict):
     return tags, attributes
 
 def taglist_fromplaylistdf(playlistdata)->list:
+    '''
+    retrieve a list of lists of tags for each song in an inputted playlist df    
+    '''
     listlist = []
     for i in (range(len(playlistdata))):
         track, artist = playlistdata.loc[i]['name'], playlistdata.loc[i]['artist_name']
@@ -312,6 +369,10 @@ def taglist_fromplaylistdf(playlistdata)->list:
     return listlist
 
 def count_strings(list_of_lists):
+    '''
+    given a list of lists, return a dictionary showing the number of times each unique item appeared across all the lists. 
+    this is used for making the bar chart of tags from the list of lists of tags as generated with taglist_fromplaylistdf
+    '''
     string_count = {}
     for lst in list_of_lists:
         for string in lst:
@@ -320,5 +381,8 @@ def count_strings(list_of_lists):
     return sorted_dict
 
 def format_seconds(seconds):
+    '''
+    reformat a song length in seconds into a nice string of form MM:SS
+    '''
     minutes, seconds = divmod(seconds, 60)
     return f"{int(minutes)}:{int(seconds):02d}"
